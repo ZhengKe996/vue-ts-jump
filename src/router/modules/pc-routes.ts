@@ -10,6 +10,11 @@ const routes: RouteRecordRaw[] = [
     name: "main",
     component: () => import("@/views/Main"),
   },
+  {
+    path: "/game",
+    name: "game-page",
+    component: () => import("@/views/Game"),
+  },
 ];
 
 export default routes;
