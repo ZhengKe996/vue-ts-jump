@@ -187,94 +187,62 @@ class Game {
 
   // 创建 cube
   private createCube() {
-    // const loader = new FontLoader();
-    // loader.load("/src/assets/fonts/Microsoft YaHei_Regular.json", (res) => {
-    //   const group = new Group();
-    //   const geometry = new BoxGeometry(
-    //     this.config.cubeWidth,
-    //     this.config.cubeHeight,
-    //     this.config.cubeDeep
-    //   );
-    //   const material = new MeshLambertMaterial({
-    //     color: this.config.cubeColor,
-    //   });
-    //   const cube = new Mesh(geometry, material);
+    const loader = new FontLoader();
+    loader.load("/src/assets/fonts/Microsoft YaHei_Regular.json", (res) => {
+      const group = new Group();
+      const geometry = new BoxGeometry(
+        this.config.cubeWidth,
+        this.config.cubeHeight,
+        this.config.cubeDeep
+      );
+      const material = new MeshLambertMaterial({
+        color: this.config.cubeColor,
+      });
+      const cube = new Mesh(geometry, material);
 
-    //   const font = new TextGeometry(`浙 江`, {
-    //     font: res, // 字体格式
-    //     size: 1, // 字体大小
-    //     height: 0.1, // 字体深度
-    //     curveSegments: 8, // 曲线控制点数
-    //     bevelEnabled: true, // 斜角
-    //     bevelThickness: 0.1, // 斜角的深度
-    //     bevelSize: 0.1, // 斜角的大小
-    //     bevelSegments: 1, // 斜角段数
-    //   });
-    //   var mat = new MeshLambertMaterial({
-    //     color: "red",
-    //   });
-    //   const mesh = new Mesh(font, mat);
-    //   group.add(cube, mesh);
-    //   if (this.cubes.length) {
-    //     group.position.x = this.cubes[this.cubes.length - 1].position.x;
-    //     group.position.y = this.cubes[this.cubes.length - 1].position.y;
-    //     group.position.z = this.cubes[this.cubes.length - 1].position.z;
-    //     this.cubeStat.nextDir =
-    //       Math.random() > 0.5 ? Direction.LEFT : Direction.RIGHT;
-    //     if (this.cubeStat.nextDir === Direction.LEFT) {
-    //       group.position.x =
-    //         group.position.x - Math.round(Math.random() * 4 + 6);
-    //     } else {
-    //       group.position.z =
-    //         group.position.z - Math.round(Math.random() * 4 + 6);
-    //       mesh.rotation.y = Math.PI / 2;
-    //       mesh.position.set(2, -0.5, 1.25);
-    //     }
-    //   }
-    //   // 第一块渲染
-    //   mesh.rotation.y = Math.PI / 2;
-    //   mesh.position.set(2, -0.5, 1.25);
-    //   this.cubes.push(group);
-    //   if (this.cubes.length > 5) {
-    //     this.scene.remove(this.cubes.shift());
-    //   }
-    //   this.scene.add(group);
-    //   if (this.cubes.length > 1) {
-    //     this.updateCameraPros();
-    //   }
-    // });
-
-    const geometry = new BoxGeometry(
-      this.config.cubeWidth,
-      this.config.cubeHeight,
-      this.config.cubeDeep
-    );
-
-    const material = new MeshLambertMaterial({
-      color: this.config.cubeColor,
-    });
-    const cube = new Mesh(geometry, material);
-
-    if (this.cubes.length) {
-      cube.position.x = this.cubes[this.cubes.length - 1].position.x;
-      cube.position.y = this.cubes[this.cubes.length - 1].position.y;
-      cube.position.z = this.cubes[this.cubes.length - 1].position.z;
-      this.cubeStat.nextDir =
-        Math.random() > 0.5 ? Direction.LEFT : Direction.RIGHT;
-      if (this.cubeStat.nextDir === Direction.LEFT) {
-        cube.position.x = cube.position.x - Math.round(Math.random() * 4 + 6);
-      } else {
-        cube.position.z = cube.position.z - Math.round(Math.random() * 4 + 6);
+      const font = new TextGeometry(`浙 江`, {
+        font: res, // 字体格式
+        size: 1, // 字体大小
+        height: 0.1, // 字体深度
+        curveSegments: 8, // 曲线控制点数
+        bevelEnabled: true, // 斜角
+        bevelThickness: 0.1, // 斜角的深度
+        bevelSize: 0.1, // 斜角的大小
+        bevelSegments: 1, // 斜角段数
+      });
+      var mat = new MeshLambertMaterial({
+        color: "red",
+      });
+      const mesh = new Mesh(font, mat);
+      group.add(cube, mesh);
+      if (this.cubes.length) {
+        group.position.x = this.cubes[this.cubes.length - 1].position.x;
+        group.position.y = this.cubes[this.cubes.length - 1].position.y;
+        group.position.z = this.cubes[this.cubes.length - 1].position.z;
+        this.cubeStat.nextDir =
+          Math.random() > 0.5 ? Direction.LEFT : Direction.RIGHT;
+        if (this.cubeStat.nextDir === Direction.LEFT) {
+          group.position.x =
+            group.position.x - Math.round(Math.random() * 4 + 6);
+        } else {
+          group.position.z =
+            group.position.z - Math.round(Math.random() * 4 + 6);
+          mesh.rotation.y = Math.PI / 2;
+          mesh.position.set(2, -0.5, 1.25);
+        }
       }
-    }
-    this.cubes.push(cube);
-    if (this.cubes.length > 5) {
-      this.scene.remove(this.cubes.shift());
-    }
-    this.scene.add(cube);
-    if (this.cubes.length > 1) {
-      this.updateCameraPros();
-    }
+      // 第一块渲染
+      mesh.rotation.y = Math.PI / 2;
+      mesh.position.set(2, -0.5, 1.25);
+      this.cubes.push(group);
+      if (this.cubes.length > 5) {
+        this.scene.remove(this.cubes.shift());
+      }
+      this.scene.add(group);
+      if (this.cubes.length > 1) {
+        this.updateCameraPros();
+      }
+    });
   }
 
   // 设置相机与窗口大小
