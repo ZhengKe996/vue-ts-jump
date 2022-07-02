@@ -68,6 +68,7 @@ class Game {
   jumperStat: { ready: boolean; xSpeed: number; ySpeed: number };
   falledStat: { location: number; distance: number };
   fallingStat: { end: boolean; speed: number };
+
   constructor() {
     this.config = {
       background: 0x282828,
@@ -149,6 +150,14 @@ class Game {
     });
 
     this.canvas?.addEventListener("mouseup", () => {
+      this.handleMouseUp();
+    });
+
+    this.canvas?.addEventListener("touchstart", () => {
+      this.handleMouseDown();
+    });
+
+    this.canvas?.addEventListener("touchend", () => {
       this.handleMouseUp();
     });
   }
@@ -339,7 +348,7 @@ class Game {
     if (!this.jumperStat.ready && this.jumper!.scale.y > 0.02) {
       // y 压缩 jumper
       this.jumper!.scale.y -= 0.01;
-
+      console.log(this.jumper!.scale.y);
       // 落地目标点
       this.jumperStat.xSpeed += 0.004;
       this.jumperStat.ySpeed += 0.008;

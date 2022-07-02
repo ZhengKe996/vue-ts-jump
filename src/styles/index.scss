@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html {
+  touch-action: none;
+  -webkit-touch-callout: none; // 禁止长按呼出菜单
+  -webkit-user-select: none; // 禁止长按选择文字/图片行为
+  -webkit-touch-callout: none; // 禁用系统默认菜单、img元素比如保存图像等等
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}

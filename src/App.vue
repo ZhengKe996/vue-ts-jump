@@ -1,4 +1,12 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { onMounted } from "vue";
+
+onMounted(() => {
+  document.oncontextmenu = function (e) {
+    return false;
+  };
+});
+</script>
 
 <template>
   <router-view />
