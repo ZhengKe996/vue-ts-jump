@@ -15,8 +15,9 @@ import {
   Group,
 } from "three";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
-import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
+import { TTFLoader } from "three/examples/jsm/loaders/TTFLoader";
 import { useWindowSize } from "@vueuse/core";
+import { Font } from "three/examples/jsm/loaders/FontLoader";
 
 enum Direction {
   LEFT = "left",
@@ -116,13 +117,13 @@ class Game {
     };
   }
 
-  init(DOM: HTMLElement | undefined) {
+  async init(DOM: HTMLElement | undefined) {
     this.addAxisHelp();
     this.setCamera();
     this.setRenderer(DOM);
     this.setLight();
-    this.createCube();
-    this.createCube();
+    await this.createCube();
+    await this.createCube();
     this.createJumper();
     this.updateCamera();
     watch(
@@ -186,63 +187,66 @@ class Game {
   }
 
   // 创建 cube
-  private createCube() {
-    const loader = new FontLoader();
-    loader.load("/src/assets/fonts/Microsoft YaHei_Regular.json", (res) => {
-      const group = new Group();
-      const geometry = new BoxGeometry(
-        this.config.cubeWidth,
-        this.config.cubeHeight,
-        this.config.cubeDeep
-      );
-      const material = new MeshLambertMaterial({
-        color: this.config.cubeColor,
-      });
-      const cube = new Mesh(geometry, material);
+  private async createCube() {
+    const loader = new TTFLoader();
+    await loader.load(
+      "https://tao-tall.oss-cn-hangzhou.aliyuncs.com/font/AliHYAiHei.ttf",
+      (res) => {
+        const group = new Group();
+        const geometry = new BoxGeometry(
+          this.config.cubeWidth,
+          this.config.cubeHeight,
+          this.config.cubeDeep
+        );
+        const material = new MeshLambertMaterial({
+          color: this.config.cubeColor,
+        });
+        const cube = new Mesh(geometry, material);
 
-      const font = new TextGeometry(`浙 江`, {
-        font: res, // 字体格式
-        size: 1, // 字体大小
-        height: 0.1, // 字体深度
-        curveSegments: 8, // 曲线控制点数
-        bevelEnabled: true, // 斜角
-        bevelThickness: 0.1, // 斜角的深度
-        bevelSize: 0.1, // 斜角的大小
-        bevelSegments: 1, // 斜角段数
-      });
-      var mat = new MeshLambertMaterial({
-        color: "red",
-      });
-      const mesh = new Mesh(font, mat);
-      group.add(cube, mesh);
-      if (this.cubes.length) {
-        group.position.x = this.cubes[this.cubes.length - 1].position.x;
-        group.position.y = this.cubes[this.cubes.length - 1].position.y;
-        group.position.z = this.cubes[this.cubes.length - 1].position.z;
-        this.cubeStat.nextDir =
-          Math.random() > 0.5 ? Direction.LEFT : Direction.RIGHT;
-        if (this.cubeStat.nextDir === Direction.LEFT) {
-          group.position.x =
-            group.position.x - Math.round(Math.random() * 4 + 6);
-        } else {
-          group.position.z =
-            group.position.z - Math.round(Math.random() * 4 + 6);
-          mesh.rotation.y = Math.PI / 2;
-          mesh.position.set(2, -0.5, 1.25);
+        const font = new TextGeometry(`庆 元`, {
+          font: new Font(res), // 字体格式
+          size: 1, // 字体大小
+          height: 0.01, // 字体深度
+          curveSegments: 16, // 曲线控制点数
+          bevelEnabled: true, // 斜角
+          bevelThickness: 0.05, // 斜角的深度
+          bevelSize: 0.05, // 斜角的大小
+          bevelSegments: 3, // 斜角段数
+        });
+        var mat = new MeshLambertMaterial({
+          color: "red",
+        });
+        const mesh = new Mesh(font, mat);
+        group.add(cube, mesh);
+        if (this.cubes.length) {
+          group.position.x = this.cubes[this.cubes.length - 1].position.x;
+          group.position.y = this.cubes[this.cubes.length - 1].position.y;
+          group.position.z = this.cubes[this.cubes.length - 1].position.z;
+          this.cubeStat.nextDir =
+            Math.random() > 0.5 ? Direction.LEFT : Direction.RIGHT;
+          if (this.cubeStat.nextDir === Direction.LEFT) {
+            group.position.x =
+              group.position.x - Math.round(Math.random() * 4 + 6);
+          } else {
+            group.position.z =
+              group.position.z - Math.round(Math.random() * 4 + 6);
+            mesh.rotation.y = Math.PI / 2;
+            mesh.position.set(2, -0.5, 1.25);
+          }
+        }
+        // 第一块渲染
+        mesh.rotation.y = Math.PI / 2;
+        mesh.position.set(2, -0.5, 1.25);
+        this.cubes.push(group);
+        if (this.cubes.length > 5) {
+          this.scene.remove(this.cubes.shift());
+        }
+        this.scene.add(group);
+        if (this.cubes.length > 1) {
+          this.updateCameraPros();
         }
       }
-      // 第一块渲染
-      mesh.rotation.y = Math.PI / 2;
-      mesh.position.set(2, -0.5, 1.25);
-      this.cubes.push(group);
-      if (this.cubes.length > 5) {
-        this.scene.remove(this.cubes.shift());
-      }
-      this.scene.add(group);
-      if (this.cubes.length > 1) {
-        this.updateCameraPros();
-      }
-    });
+    );
   }
 
   // 设置相机与窗口大小
