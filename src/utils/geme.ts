@@ -1,5 +1,4 @@
 import { watch } from "vue";
-
 import {
   ColorRepresentation,
   OrthographicCamera,
@@ -18,7 +17,7 @@ import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 import { TTFLoader } from "three/examples/jsm/loaders/TTFLoader";
 import { useWindowSize } from "@vueuse/core";
 import { Font } from "three/examples/jsm/loaders/FontLoader";
-
+import { GameDifficulty } from "../constants";
 enum Direction {
   LEFT = "left",
   RIGHT = "right",
@@ -38,6 +37,7 @@ enum BoxDropDirection {
   RightTop = "RightTop",
   None = "None",
 }
+
 interface GameConfig {
   background: ColorRepresentation;
   ground: number;
@@ -61,6 +61,8 @@ class Game {
   renderer: WebGL1Renderer;
   size: { width: number; height: number };
   cameraPros: { current: Vector3; next: Vector3 };
+  difficulty: GameDifficulty;
+  placeList: string[];
   cubes: any[];
   cubeStat: { nextDir: string };
   canvas: HTMLCanvasElement | null = null;
@@ -68,8 +70,10 @@ class Game {
   jumperStat: { ready: boolean; xSpeed: number; ySpeed: number };
   falledStat: { location: number; distance: number };
   fallingStat: { end: boolean; speed: number };
+  successCallback: (score: number) => void = () => {};
+  failedCallback: () => void = () => {};
 
-  constructor() {
+  constructor(placeList: string[], difficulty: GameDifficulty) {
     this.config = {
       background: 0x282828,
       ground: -1,
@@ -116,6 +120,9 @@ class Game {
       end: false,
       speed: 0.2,
     };
+    this.placeList = placeList;
+    console.log(difficulty);
+    this.difficulty = difficulty;
   }
 
   async init(DOM: HTMLElement | undefined) {
@@ -161,7 +168,12 @@ class Game {
       this.handleMouseUp();
     });
   }
-
+  public addSuccessFn(fun: (score: number) => void) {
+    this.successCallback = fun;
+  }
+  public addFailedFn(fun: () => void) {
+    this.failedCallback = fun;
+  }
   // 设置相机位置
   private setCamera() {
     this.camera.position.set(100, 100, 100);
@@ -198,6 +210,8 @@ class Game {
   // 创建 cube
   private async createCube() {
     const loader = new TTFLoader();
+    const index =
+      this.score === 0 ? 0 : Math.ceil(this.score / this.difficulty);
     await loader.load(
       "https://tao-tall.oss-cn-hangzhou.aliyuncs.com/font/AliHYAiHei.ttf",
       (res) => {
@@ -212,7 +226,7 @@ class Game {
         });
         const cube = new Mesh(geometry, material);
 
-        const font = new TextGeometry(`庆 元`, {
+        const font = new TextGeometry(`${this.placeList[index]}`, {
           font: new Font(res), // 字体格式
           size: 1, // 字体大小
           height: 0.01, // 字体深度
@@ -348,7 +362,7 @@ class Game {
     if (!this.jumperStat.ready && this.jumper!.scale.y > 0.02) {
       // y 压缩 jumper
       this.jumper!.scale.y -= 0.01;
-      console.log(this.jumper!.scale.y);
+
       // 落地目标点
       this.jumperStat.xSpeed += 0.004;
       this.jumperStat.ySpeed += 0.008;
@@ -390,9 +404,9 @@ class Game {
         this.score++;
         this.createCube();
         this.updateCamera();
-        // if (this.successCallback) {
-        //   this.successCallback(this.score);
-        // }
+        if (this.successCallback) {
+          this.successCallback(this.score);
+        }
       } else {
         this.falling();
       }
@@ -522,10 +536,31 @@ class Game {
         this.falling();
       });
     } else {
-      // if (this.failedCallback) {
-      //   this.failedCallback();
-      // }
+      if (this.failedCallback) {
+        this.failedCallback();
+      }
     }
+  }
+
+  public restart() {
+    //重置某些值
+    this.score = 0;
+    console.log(this.score);
+    this.falledStat = { location: -1, distance: 0 };
+    this.fallingStat = { end: false, speed: 0.2 };
+    this.cameraPros = {
+      current: new Vector3(0, 0, 0),
+      next: new Vector3(0, 0, 0),
+    };
+    //删除场景中的几何体
+    this.scene.remove(this.jumper!);
+    this.cubes.forEach((item) => this.scene.remove(item));
+    this.cubes = [];
+    //重新开始
+    this.createCube();
+    this.createCube();
+    this.createJumper();
+    this.updateCamera();
   }
 }
 

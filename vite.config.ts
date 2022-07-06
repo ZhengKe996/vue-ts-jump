@@ -4,6 +4,11 @@ import { resolve } from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base:
+    process.env.NODE_ENV === "production"
+      ? "https://tao-tall.oss-cn-hangzhou.aliyuncs.com/jump-code/"
+      : "/",
+
   plugins: [vue()],
   resolve: {
     alias: {
