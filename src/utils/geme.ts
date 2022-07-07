@@ -126,7 +126,7 @@ class Game {
   }
 
   async init(DOM: HTMLElement | undefined) {
-    this.addAxisHelp();
+    // this.addAxisHelp(); // 辅助线
     this.setCamera();
     this.setRenderer(DOM);
     this.setLight();

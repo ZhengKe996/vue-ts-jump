@@ -6,7 +6,7 @@
       class="score-container block text-white text-center text-opacity-60 my-4 xl:my-8"
     >
       <p class="title text-2xl xl:text-4xl font-bold">本次得分</p>
-      <h1 class="score text-6xl xl:text-8xl font-bold mt-1.5">0</h1>
+      <h1 class="score text-6xl xl:text-8xl font-bold mt-1.5">{{ score }}</h1>
     </div>
     <button
       class="restart w-[80%] block h-10 xl:h-12 rounded-2xl mx-auto bg-white border-none font-bold text-xl xl:text-2xl cursor-pointer mt-4 xl:mt-8 hover: text-gray-500"
@@ -18,5 +18,8 @@
 </template>
 
 <script setup lang="ts">
+defineProps({
+  score: { type: Number, required: true },
+});
 const emits = defineEmits(["reStart"]);
 </script>

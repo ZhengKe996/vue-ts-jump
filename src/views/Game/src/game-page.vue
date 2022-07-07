@@ -7,7 +7,7 @@
       class="mask flex-col justify-center items-center fixed w-full h-full bg-black bg-opacity-40"
       v-if="show"
     >
-      <score-card @re-start="reStart" />
+      <score-card :score="score" @re-start="reStart" />
     </div>
   </div>
 </template>
@@ -43,5 +43,3 @@ const reStart = () => {
   show.value = false;
 };
 </script>
-
-<style scoped></style>
